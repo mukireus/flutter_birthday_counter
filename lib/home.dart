@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
+import 'package:intl/intl.dart'; // https://pub.dev/packages/intl
 
 class Home extends StatefulWidget {
   @override
@@ -8,7 +9,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  DateTime dateTime;
+  DateTime birthday;
+  String differenceInDays = "";
+
+  final f = new DateFormat('dd.MM.yyyy');
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,33 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Text("Birtday Counter", style: _appTextStyle),
-            Text(dateTime == null ? "Bir tarih seçiniz" : dateTime.toString(), style: _appTextStyle),
+            Text("Birtday Counter", style: _appTextStyle(26)),
+            Text(birthday == null ? "Bir tarih seçiniz" : "Seçilen Tarih : " + f.format(birthday).toString(), style: _appTextStyle(26)),
+            Column(
+              children: <Widget>[
+                Text("Doğum Gününüze Kalan Süre:", style: _appTextStyle(26)),
+                _counterContainer("Gün", differenceInDays),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _counterContainer(String text, String text2) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 150,
+        width: 150,
+        decoration: BoxDecoration(border: Border.all(color: Colors.white), borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(text2, style: _appTextStyle(20)),
+            Text(text, style: _appTextStyle(20)),
           ],
         ),
       ),
@@ -44,7 +73,10 @@ class _HomeState extends State<Home> {
           },
         ).then((date) {
           setState(() {
-            dateTime = date;
+            birthday = date;
+            DateTime dateTimeNow = DateTime.now();
+            differenceInDays = dateTimeNow.difference(birthday).inDays.toString();
+            print(differenceInDays);
           });
         });
       },
@@ -52,4 +84,4 @@ class _HomeState extends State<Home> {
   }
 }
 
-TextStyle get _appTextStyle => TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold);
+TextStyle _appTextStyle(double size) => TextStyle(color: Colors.white, fontSize: size, fontWeight: FontWeight.bold);
